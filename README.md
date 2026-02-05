@@ -1,59 +1,204 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Emremlak
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Emlak ilan sitesi projesi. Satılık ve kiralık emlak ilanlarının listelendiği, Laravel tabanlı web uygulaması.
 
-## About Laravel
+## İçindekiler
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- [Teknolojiler](#teknolojiler)
+- [Gereksinimler](#gereksinimler)
+- [Kurulum](#kurulum)
+- [Yapılandırma](#yapılandırma)
+- [Proje Yapısı](#proje-yapısı)
+- [Route'lar ve Sayfalar](#routelar-ve-sayfalar)
+- [Tema](#tema)
+- [Geliştirme](#geliştirme)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Teknolojiler
 
-## Learning Laravel
+| Bileşen | Sürüm / Açıklama |
+|--------|-------------------|
+| **Laravel** | 12.x |
+| **PHP** | 8.2+ |
+| **Veritabanı** | SQLite (varsayılan), MySQL/PostgreSQL uyumlu |
+| **Ön yüz** | Blade şablonları, Bootstrap tabanlı tema (Homeland / Colorlib) |
+| **JavaScript** | jQuery, Owl Carousel, AOS, Magnific Popup |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Gereksinimler
 
-## Laravel Sponsors
+- PHP 8.2 veya üzeri
+- Composer
+- (İsteğe bağlı) Node.js & npm (Vite için)
+- XAMPP/WAMP veya yerel PHP sunucusu
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## Kurulum
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 1. Bağımlılıkları yükleyin
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 2. Ortam dosyasını oluşturun
 
-## Code of Conduct
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 3. Veritabanını hazırlayın
 
-## Security Vulnerabilities
+Varsayılan SQLite kullanılıyorsa ek ayar gerekmez. Migration'ları çalıştırın:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan migrate
+```
 
-## License
+MySQL kullanacaksanız `.env` içinde `DB_*` değişkenlerini düzenleyin, sonra tekrar:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan migrate
+```
+
+### 4. Uygulamayı çalıştırın
+
+**Artisan ile:**
+
+```bash
+php artisan serve
+```
+
+Tarayıcıda: **http://127.0.0.1:8000**
+
+**XAMPP ile:**
+
+Projeyi `htdocs` altına koyduysanız:
+
+- **http://localhost/emremlak/public**
+
+Apache ile doğrudan `public` klasörünü kullanacak şekilde Virtual Host tanımlayabilirsiniz.
+
+---
+
+## Yapılandırma
+
+### .env önemli değişkenler
+
+| Değişken | Açıklama |
+|----------|----------|
+| `APP_NAME` | Site adı (örn. `Emremlak`) |
+| `APP_URL` | Uygulama adresi (örn. `http://localhost/emremlak/public`) |
+| `DB_CONNECTION` | `sqlite`, `mysql` vb. |
+| `DB_DATABASE` | Veritabanı adı / SQLite dosya yolu |
+| `DB_USERNAME` / `DB_PASSWORD` | MySQL kullanıcı adı ve şifre |
+
+---
+
+## Proje Yapısı
+
+```
+emremlak/
+├── app/
+│   ├── Http/Controllers/   # Controller'lar
+│   ├── Models/              # Eloquent modelleri
+│   └── Providers/
+├── config/                  # Uygulama ayarları
+├── database/
+│   ├── migrations/          # Veritabanı migration'ları
+│   └── seeders/
+├── public/
+│   ├── tema/                # Tema varlıkları (css, js, fonts, images)
+│   │   ├── css/
+│   │   ├── js/
+│   │   ├── fonts/
+│   │   └── images/
+│   ├── index.php
+│   └── .htaccess
+├── resources/
+│   └── views/
+│       ├── layouts/
+│       │   └── app.blade.php    # Ana layout (navbar, footer)
+│       ├── home.blade.php       # Ana sayfa
+│       ├── buy.blade.php        # Satılık
+│       ├── rent.blade.php       # Kiralık
+│       ├── properties.blade.php # İlan listesi
+│       ├── blog.blade.php
+│       ├── about.blade.php
+│       ├── contact.blade.php
+│       └── welcome.blade.php    # Laravel varsayılan (kullanılmıyor)
+├── routes/
+│   └── web.php             # Web route'ları
+├── storage/                # Log, cache, session
+├── tema/                   # Orijinal tema kaynağı (referans)
+└── .env                    # Ortam değişkenleri (git’e eklenmez)
+```
+
+---
+
+## Route'lar ve Sayfalar
+
+| URL | Route adı | Açıklama |
+|-----|-----------|----------|
+| `/` | `home` | Ana sayfa (slider, arama formu, öne çıkan ilanlar, hizmetler, blog önizleme, danışmanlar) |
+| `/satilik` | `buy` | Satılık ilanlar |
+| `/kiralik` | `rent` | Kiralık ilanlar |
+| `/ilanlar` | `properties` | Tüm ilanlar (liste/grid) |
+| `/blog` | `blog` | Blog sayfası |
+| `/hakkimizda` | `about` | Hakkımızda |
+| `/iletisim` | `contact` | İletişim formu ve bilgiler |
+
+View'larda `route('isim')` ve `url('/')` kullanılır; linkler bu route'lara göre üretilir.
+
+---
+
+## Tema
+
+- **Kaynak:** Proje kökündeki `tema/` klasörü (orijinal HTML/CSS/JS).
+- **Yayınlanan varlıklar:** `public/tema/` altında (css, js, fonts, images).
+- **Layout:** `resources/views/layouts/app.blade.php` — navbar, footer ve tüm tema CSS/JS burada yüklenir.
+- **Asset kullanımı:** Blade içinde `{{ asset('tema/css/style.css') }}` gibi `asset('tema/...')` kullanılır.
+
+Tema (Homeland / Colorlib) Bootstrap, Owl Carousel, AOS ve jQuery eklentileri kullanır. Mobil menü ve slider tema JS’i ile çalışır.
+
+---
+
+## Geliştirme
+
+### Yeni sayfa eklemek
+
+1. `routes/web.php` içine route tanımlayın.
+2. `resources/views/` altında `layouts.app`’i extend eden bir Blade view oluşturun.
+3. Gerekirse `layouts/app.blade.php` menüsüne link ekleyin.
+
+### Veritabanı değişikliği
+
+```bash
+php artisan make:migration create_ilanlar_table
+# migration dosyasını düzenleyin
+php artisan migrate
+```
+
+### Test
+
+```bash
+php artisan test
+# veya
+./vendor/bin/phpunit
+```
+
+### Kod stili (Laravel Pint)
+
+```bash
+./vendor/bin/pint
+```
+
+---
+
+## Lisans
+
+Laravel framework [MIT lisansı](https://opensource.org/licenses/MIT) altındadır. Tema lisansı için tema kaynak dosyalarına bakınız.
