@@ -199,6 +199,13 @@ php artisan test
 
 ---
 
+## Yönetici Paneli
+
+- **URL:** `/admin` veya `/admin/giris`
+- **Varsayılan giriş:** `admin@emremlak.com` / `password` (ilk kurulumda `php artisan db:seed` ile oluşturulur)
+- Panelde **ilanlar** (mülk) ekleyebilir, düzenleyebilir ve silebilirsiniz. Sadece `is_admin = true` olan kullanıcılar panele erişebilir.
+- Mevcut bir kullanıcıyı admin yapmak için: `php artisan tinker` → `User::where('email','your@email.com')->update(['is_admin'=>true]);`
+
 ## Lisans
 
 Laravel framework [MIT lisansı](https://opensource.org/licenses/MIT) altındadır. Tema lisansı için tema kaynak dosyalarına bakınız.
