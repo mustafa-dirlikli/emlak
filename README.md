@@ -1,7 +1,7 @@
 # Emremlak
 
-Emlak ilan sitesi projesi. Satılık ve kiralık emlak ilanlarının listelendiği, Laravel tabanlı web uygulaması.
-
+Emlak ilan sitesi projesi. Satılık ve kiralık emlak ilanlarının listelendiği, Laravel tabanlı web uygulaması...
+--DENEME
 ## İçindekiler
 
 - [Teknolojiler](#teknolojiler)
