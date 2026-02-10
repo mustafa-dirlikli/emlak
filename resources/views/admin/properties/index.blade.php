@@ -35,7 +35,10 @@
     </form>
 
     @if($properties->isEmpty())
-        <p class="text-muted mb-0">Henüz ilan yok. <a href="{{ route('admin.properties.create') }}">İlk ilanı ekleyin</a>.</p>
+        <div class="text-center py-5">
+            <p class="text-muted mb-2">Henüz ilan yok.</p>
+            <a href="{{ route('admin.properties.create') }}" class="btn btn-admin">İlk ilanı ekle</a>
+        </div>
     @else
         <div class="table-responsive">
             <table class="table admin-table">
@@ -77,13 +80,9 @@
                                 <span class="badge bg-warning text-dark">Öne çıkan</span>
                             @endif
                         </td>
-                        <td>
-                            <a href="{{ route('admin.properties.edit', $p) }}" class="btn btn-sm btn-outline-primary">Düzenle</a>
-                            <form action="{{ route('admin.properties.destroy', $p) }}" method="POST" class="d-inline" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
-                            </form>
+                        <td class="text-nowrap">
+                            <a href="{{ route('admin.properties.edit', $p) }}" class="btn btn-sm btn-admin">Düzenle</a>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#deleteModal" data-id="{{ $p->id }}" data-title="{{ e($p->title) }}">Sil</button>
                         </td>
                     </tr>
                     @endforeach
@@ -95,4 +94,42 @@
         </div>
     @endif
 </div>
+
+{{-- Silme onay modalı --}}
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">İlanı sil</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Kapat">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong id="deleteModalTitle"></strong> ilanını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">İptal</button>
+                <form id="deleteModalForm" method="POST" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+document.getElementById('deleteModal') && document.getElementById('deleteModal').addEventListener('show.bs.modal', function(e) {
+    var btn = e.relatedTarget;
+    var id = btn.getAttribute('data-id');
+    var title = btn.getAttribute('data-title');
+    var form = document.getElementById('deleteModalForm');
+    form.action = '{{ url("admin/properties") }}/' + id;
+    document.getElementById('deleteModalTitle').textContent = title || ('#' + id);
+});
+</script>
+@endpush
 @endsection

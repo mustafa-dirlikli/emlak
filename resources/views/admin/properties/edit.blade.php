@@ -110,6 +110,7 @@
                     </div>
                 </div>
                 <hr class="my-4">
+                <div class="admin-section admin-section-konut" data-section="konut">
                 <h6 class="text-muted mb-3">Konut özellikleri</h6>
                 <div class="row">
                     <div class="col-md-3">
@@ -223,7 +224,9 @@
                         </div>
                     </div>
                 </div>
+                </div>
                 <hr class="my-4">
+                <div class="admin-section admin-section-isyeri" data-section="isyeri">
                 <h6 class="text-muted mb-3">İş yeri özellikleri</h6>
                 <div class="row">
                     <div class="col-md-3">
@@ -256,7 +259,9 @@
                     </div>
                 </div>
                 <p class="small text-muted">İş yeri ilanlarında m², Aidat, Isıtma ve Bina Yaşı alanları yukarıdaki Konut / genel bölümden kullanılır.</p>
+                </div>
                 <hr class="my-4">
+                <div class="admin-section admin-section-arsa" data-section="arsa">
                 <h6 class="text-muted mb-3">İlan / Arsa alanları</h6>
                 <div class="row">
                     <div class="col-md-4">
@@ -364,6 +369,7 @@
                     <textarea name="arsa_ozellikler" id="arsa_ozellikler" class="form-control @error('arsa_ozellikler') is-invalid @enderror" rows="3" placeholder='{"ozellik": "deger"}'>{{ old('arsa_ozellikler', $property->arsa_ozellikler ? json_encode($property->arsa_ozellikler, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) : '') }}</textarea>
                     @error('arsa_ozellikler')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+                </div>
             </div>
             <div class="col-md-4">
                 <div class="form-group mb-3">
@@ -398,4 +404,29 @@
         <a href="{{ route('admin.properties.index') }}" class="btn btn-outline-secondary">İptal</a>
     </form>
 </div>
+
+@push('scripts')
+<script>
+(function() {
+    var konutTypes = ['konut', 'daire', 'villa', 'mustakil'];
+    var arsaTypes = ['arsa'];
+    var isyeriTypes = ['isyeri'];
+    function toggleSections() {
+        var type = (document.getElementById('property_type') || {}).value || '';
+        document.querySelectorAll('.admin-section').forEach(function(el) {
+            var section = el.getAttribute('data-section');
+            var show = (section === 'konut' && konutTypes.indexOf(type) !== -1) ||
+                (section === 'arsa' && arsaTypes.indexOf(type) !== -1) ||
+                (section === 'isyeri' && isyeriTypes.indexOf(type) !== -1);
+            el.style.display = show ? '' : 'none';
+        });
+    }
+    var sel = document.getElementById('property_type');
+    if (sel) {
+        sel.addEventListener('change', toggleSections);
+        toggleSections();
+    }
+})();
+</script>
+@endpush
 @endsection

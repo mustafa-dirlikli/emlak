@@ -36,7 +36,11 @@ class PropertyController extends Controller
 
     public function create(): View
     {
-        return view('admin.properties.create');
+        $defaultType = request('tip', 'daire');
+        if (! in_array($defaultType, ['konut', 'daire', 'arsa', 'isyeri', 'villa', 'mustakil'], true)) {
+            $defaultType = 'daire';
+        }
+        return view('admin.properties.create', ['defaultPropertyType' => $defaultType]);
     }
 
     public function store(Request $request): RedirectResponse

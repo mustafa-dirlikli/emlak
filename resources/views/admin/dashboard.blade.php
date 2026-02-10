@@ -3,8 +3,16 @@
 @section('title', 'Panel')
 
 @section('content')
-<div class="admin-header">
+<div class="admin-header d-flex flex-wrap align-items-center justify-content-between gap-3">
     <h1>Panel</h1>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ route('admin.properties.create') }}" class="btn btn-admin btn-lg">
+            <span class="icon icon-plus mr-1"></span> Yeni İlan Ekle
+        </a>
+        <a href="{{ route('admin.properties.create') }}?tip=arsa" class="btn btn-outline-secondary">Arsa</a>
+        <a href="{{ route('admin.properties.create') }}?tip=konut" class="btn btn-outline-secondary">Konut</a>
+        <a href="{{ route('admin.properties.create') }}?tip=isyeri" class="btn btn-outline-secondary">İş Yeri</a>
+    </div>
 </div>
 
 <div class="row g-3 mb-4">
@@ -37,7 +45,8 @@
 <div class="admin-card">
     <h5 class="mb-3">Son Eklenen İlanlar</h5>
     @if($recentProperties->isEmpty())
-        <p class="text-muted mb-0">Henüz ilan yok. <a href="{{ route('admin.properties.create') }}">Yeni ilan ekleyin</a>.</p>
+        <p class="text-muted mb-0">Henüz ilan yok.</p>
+        <a href="{{ route('admin.properties.create') }}" class="btn btn-admin mt-2">İlk ilanı ekle</a>
     @else
         <div class="table-responsive">
             <table class="table admin-table">
@@ -67,7 +76,7 @@
                             @endif
                         </td>
                         <td>
-                            <a href="{{ route('admin.properties.edit', $p) }}" class="btn btn-sm btn-outline-primary">Düzenle</a>
+                            <a href="{{ route('admin.properties.edit', $p) }}" class="btn btn-sm btn-admin">Düzenle</a>
                         </td>
                     </tr>
                     @endforeach
