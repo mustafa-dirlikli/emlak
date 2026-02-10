@@ -48,24 +48,52 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group mb-3">
-                    <label for="price">Fiyat (₺) <span class="text-danger">*</span></label>
-                    <input type="number" name="price" id="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price', $property->price) }}" min="0" step="1" required>
-                    @error('price')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="city">Şehir</label>
-                            <input type="text" name="city" id="city" class="form-control @error('city') is-invalid @enderror" value="{{ old('city', $property->city) }}">
-                            @error('city')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <label for="price">Fiyat <span class="text-danger">*</span></label>
+                            <input type="number" name="price" id="price" class="form-control @error('price') is-invalid @enderror" value="{{ old('price', $property->price) }}" min="0" step="1" required>
+                            @error('price')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-3">
+                            <label for="currency">Para Birimi</label>
+                            <select name="currency" id="currency" class="form-control @error('currency') is-invalid @enderror">
+                                @foreach(\App\Models\Property::currencyOptions() as $code => $label)
+                                    <option value="{{ $code }}" {{ old('currency', $property->currency ?? 'TRY') === $code ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            @error('currency')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label for="city">Şehir</label>
+                            <select name="city" id="city" class="form-control @error('city') is-invalid @enderror" data-selected="{{ old('city', $property->city) }}">
+                                <option value="">Şehir seçin</option>
+                            </select>
+                            @error('city')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
                             <label for="district">İlçe</label>
-                            <input type="text" name="district" id="district" class="form-control @error('district') is-invalid @enderror" value="{{ old('district', $property->district) }}">
+                            <select name="district" id="district" class="form-control @error('district') is-invalid @enderror" data-selected="{{ old('district', $property->district) }}">
+                                <option value="">Önce şehir seçin</option>
+                            </select>
                             @error('district')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group mb-3">
+                            <label for="neighborhood">Mahalle / Semt</label>
+                            <select name="neighborhood" id="neighborhood" class="form-control @error('neighborhood') is-invalid @enderror" data-selected="{{ old('neighborhood', $property->neighborhood) }}">
+                                <option value="">Önce ilçe seçin</option>
+                            </select>
+                            @error('neighborhood')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
                 </div>
@@ -82,16 +110,14 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group mb-3">
-                            <label for="rooms">Oda Sayısı</label>
-                            <input type="number" name="rooms" id="rooms" class="form-control @error('rooms') is-invalid @enderror" value="{{ old('rooms', $property->rooms) }}" min="0" max="50">
-                            @error('rooms')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group mb-3">
-                            <label for="bathrooms">Banyo Sayısı</label>
-                            <input type="number" name="bathrooms" id="bathrooms" class="form-control @error('bathrooms') is-invalid @enderror" value="{{ old('bathrooms', $property->bathrooms) }}" min="0" max="20">
-                            @error('bathrooms')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                            <label for="room_layout">Oda + Salon</label>
+                            <select name="room_layout" id="room_layout" class="form-control @error('room_layout') is-invalid @enderror">
+                                <option value="">Seçiniz</option>
+                                @foreach(\App\Models\Property::roomLayoutOptions() as $value => $label)
+                                    <option value="{{ $value }}" {{ old('room_layout', $property->room_layout) === $value ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            @error('room_layout')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -115,6 +141,17 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group mb-3">
+                            <label for="bathrooms">Banyo Sayısı</label>
+                            <select name="bathrooms" id="bathrooms" class="form-control @error('bathrooms') is-invalid @enderror">
+                                @foreach(\App\Models\Property::bathroomsOptions() as $val => $label)
+                                    <option value="{{ $val }}" {{ (string) old('bathrooms', $property->bathrooms) === (string) $val ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
+                            @error('bathrooms')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group mb-3">
                             <label for="area_brut">m² (Brüt)</label>
                             <input type="number" name="area_brut" id="area_brut" class="form-control @error('area_brut') is-invalid @enderror" value="{{ old('area_brut', $property->area_brut) }}" min="0">
                             @error('area_brut')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -123,21 +160,33 @@
                     <div class="col-md-3">
                         <div class="form-group mb-3">
                             <label for="bina_yasi">Bina Yaşı</label>
-                            <input type="text" name="bina_yasi" id="bina_yasi" class="form-control @error('bina_yasi') is-invalid @enderror" value="{{ old('bina_yasi', $property->bina_yasi) }}">
+                            <select name="bina_yasi" id="bina_yasi" class="form-control @error('bina_yasi') is-invalid @enderror">
+                                @foreach(\App\Models\Property::binaYasiOptions() as $val => $label)
+                                    <option value="{{ $val }}" {{ old('bina_yasi', $property->bina_yasi) === $val ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
                             @error('bina_yasi')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group mb-3">
                             <label for="bulundugu_kat">Bulunduğu Kat</label>
-                            <input type="text" name="bulundugu_kat" id="bulundugu_kat" class="form-control @error('bulundugu_kat') is-invalid @enderror" value="{{ old('bulundugu_kat', $property->bulundugu_kat) }}">
+                            <select name="bulundugu_kat" id="bulundugu_kat" class="form-control @error('bulundugu_kat') is-invalid @enderror">
+                                @foreach(\App\Models\Property::bulunduguKatOptions() as $val => $label)
+                                    <option value="{{ $val }}" {{ old('bulundugu_kat', $property->bulundugu_kat) === $val ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
                             @error('bulundugu_kat')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group mb-3">
                             <label for="kat_sayisi">Kat Sayısı</label>
-                            <input type="number" name="kat_sayisi" id="kat_sayisi" class="form-control @error('kat_sayisi') is-invalid @enderror" value="{{ old('kat_sayisi', $property->kat_sayisi) }}" min="0" max="255">
+                            <select name="kat_sayisi" id="kat_sayisi" class="form-control @error('kat_sayisi') is-invalid @enderror">
+                                @foreach(\App\Models\Property::katSayisiOptions() as $val => $label)
+                                    <option value="{{ $val }}" {{ (string) old('kat_sayisi', $property->kat_sayisi) === (string) $val ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
                             @error('kat_sayisi')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
@@ -145,22 +194,34 @@
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group mb-3">
-                            <label for="isitma">Isıtma</label>
-                            <input type="text" name="isitma" id="isitma" class="form-control @error('isitma') is-invalid @enderror" value="{{ old('isitma', $property->isitma) }}">
+                            <label for="isitma">Isınma</label>
+                            <select name="isitma" id="isitma" class="form-control @error('isitma') is-invalid @enderror">
+                                @foreach(\App\Models\Property::isitmaOptions() as $val => $label)
+                                    <option value="{{ $val }}" {{ old('isitma', $property->isitma) === $val ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
                             @error('isitma')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group mb-3">
                             <label for="mutfak">Mutfak</label>
-                            <input type="text" name="mutfak" id="mutfak" class="form-control @error('mutfak') is-invalid @enderror" value="{{ old('mutfak', $property->mutfak) }}">
+                            <select name="mutfak" id="mutfak" class="form-control @error('mutfak') is-invalid @enderror">
+                                @foreach(\App\Models\Property::mutfakOptions() as $val => $label)
+                                    <option value="{{ $val }}" {{ old('mutfak', $property->mutfak) === $val ? 'selected' : '' }}>{{ $label }}</option>
+                                @endforeach
+                            </select>
                             @error('mutfak')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group mb-3">
                             <label for="balkon">Balkon</label>
-                            <input type="text" name="balkon" id="balkon" class="form-control @error('balkon') is-invalid @enderror" value="{{ old('balkon', $property->balkon) }}">
+                            <select name="balkon" id="balkon" class="form-control @error('balkon') is-invalid @enderror">
+                                <option value="">Seçiniz</option>
+                                <option value="Var" {{ old('balkon', $property->balkon) === 'Var' ? 'selected' : '' }}>Var</option>
+                                <option value="Yok" {{ old('balkon', $property->balkon) === 'Yok' ? 'selected' : '' }}>Yok</option>
+                            </select>
                             @error('balkon')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
@@ -376,12 +437,29 @@
                     <label for="image">Ana Görsel</label>
                     @if($property->image)
                         <div class="mb-2">
-                            <img src="{{ asset('storage/'.$property->image) }}" alt="" class="img-fluid rounded" style="max-height:120px">
+                            <img src="{{ asset('storage/'.$property->image) }}" alt="" class="img-fluid rounded border" style="max-height:120px">
+                            <small class="text-muted d-block">Mevcut ana görsel</small>
                         </div>
                     @endif
                     <input type="file" name="image" id="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
-                    <small class="text-muted">Değiştirmek için yeni dosya seçin</small>
+                    <small class="text-muted">Ana görseli değiştirmek için yeni dosya seçin (isteğe bağlı)</small>
                     @error('image')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="form-group mb-3">
+                    <label>Galeri ({{ is_array($property->gallery) ? count($property->gallery) : 0 }} görsel)</label>
+                    @if($property->gallery && count($property->gallery) > 0)
+                        <div class="d-flex flex-wrap gap-2 mb-2">
+                            @foreach($property->gallery as $g)
+                                <img src="{{ asset('storage/'.$g) }}" alt="" class="rounded border" style="width:70px;height:50px;object-fit:cover;">
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-muted small mb-1">Henüz galeri görseli yok.</p>
+                    @endif
+                    <input type="file" name="gallery_new[]" id="gallery_new" class="form-control @error('gallery_new.*') is-invalid @enderror" accept="image/*" multiple>
+                    <small class="text-muted">Galeriye eklenecek görselleri seçin (birden fazla)</small>
+                    @error('gallery_new')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    @error('gallery_new.*')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="form-group mb-3">
                     <div class="form-check">
@@ -425,6 +503,73 @@
     if (sel) {
         sel.addEventListener('change', toggleSections);
         toggleSections();
+    }
+    var citySelect = document.getElementById('city');
+    var districtSelect = document.getElementById('district');
+    var neighborhoodSelect = document.getElementById('neighborhood');
+    var apiBase = '{{ url("admin/api") }}';
+    if (citySelect && districtSelect && neighborhoodSelect) {
+        function loadCities() {
+            if (citySelect.getAttribute('data-loaded') === '1') return;
+            citySelect.setAttribute('data-loaded', '1');
+            fetch(apiBase + '/cities')
+                .then(function(r) { return r.json(); })
+                .then(function(arr) {
+                    arr.forEach(function(c) {
+                        var opt = document.createElement('option');
+                        opt.value = c.name;
+                        opt.setAttribute('data-city-id', c.id);
+                        opt.textContent = c.name;
+                        citySelect.appendChild(opt);
+                    });
+                    var selected = citySelect.getAttribute('data-selected');
+                    if (selected) { citySelect.value = selected; loadDistricts(); }
+                })
+                .catch(function() { citySelect.setAttribute('data-loaded', '0'); });
+        }
+        function loadDistricts() {
+            var opt = citySelect.options[citySelect.selectedIndex];
+            var cityId = opt ? opt.getAttribute('data-city-id') : null;
+            districtSelect.innerHTML = '<option value="">Önce şehir seçin</option>';
+            neighborhoodSelect.innerHTML = '<option value="">Önce ilçe seçin</option>';
+            if (!cityId) return;
+            fetch(apiBase + '/districts?city_id=' + encodeURIComponent(cityId))
+                .then(function(r) { return r.json(); })
+                .then(function(arr) {
+                    arr.forEach(function(d) {
+                        var o = document.createElement('option');
+                        o.value = d.name;
+                        o.setAttribute('data-district-id', d.id);
+                        o.textContent = d.name;
+                        districtSelect.appendChild(o);
+                    });
+                    var selected = districtSelect.getAttribute('data-selected');
+                    if (selected) { districtSelect.value = selected; loadNeighborhoods(); }
+                });
+        }
+        function loadNeighborhoods() {
+            var opt = districtSelect.options[districtSelect.selectedIndex];
+            var districtId = opt ? opt.getAttribute('data-district-id') : null;
+            neighborhoodSelect.innerHTML = '<option value="">Önce ilçe seçin</option>';
+            if (!districtId) return;
+            fetch(apiBase + '/neighborhoods?district_id=' + encodeURIComponent(districtId))
+                .then(function(r) { return r.json(); })
+                .then(function(arr) {
+                    arr.forEach(function(n) {
+                        var o = document.createElement('option');
+                        o.value = n.name;
+                        o.textContent = n.name;
+                        neighborhoodSelect.appendChild(o);
+                    });
+                    var selected = neighborhoodSelect.getAttribute('data-selected');
+                    if (selected) neighborhoodSelect.value = selected;
+                });
+        }
+        citySelect.addEventListener('focus', loadCities);
+        citySelect.addEventListener('click', loadCities);
+        citySelect.addEventListener('change', loadDistricts);
+        districtSelect.addEventListener('change', loadNeighborhoods);
+        if (citySelect.getAttribute('data-selected')) loadCities();
     }
 })();
 </script>

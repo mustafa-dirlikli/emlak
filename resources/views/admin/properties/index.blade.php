@@ -82,7 +82,7 @@
                         </td>
                         <td class="text-nowrap">
                             <a href="{{ route('admin.properties.edit', $p) }}" class="btn btn-sm btn-admin">Düzenle</a>
-                            <button type="button" class="btn btn-sm btn-outline-danger" data-toggle="modal" data-target="#deleteModal" data-id="{{ $p->id }}" data-title="{{ e($p->title) }}">Sil</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-delete-property" data-toggle="modal" data-target="#deleteModal" data-delete-url="{{ route('admin.properties.destroy', $p) }}" data-title="{{ e($p->title) }}">Sil</button>
                         </td>
                     </tr>
                     @endforeach
@@ -122,14 +122,19 @@
 
 @push('scripts')
 <script>
-document.getElementById('deleteModal') && document.getElementById('deleteModal').addEventListener('show.bs.modal', function(e) {
-    var btn = e.relatedTarget;
-    var id = btn.getAttribute('data-id');
-    var title = btn.getAttribute('data-title');
+(function() {
     var form = document.getElementById('deleteModalForm');
-    form.action = '{{ url("admin/properties") }}/' + id;
-    document.getElementById('deleteModalTitle').textContent = title || ('#' + id);
-});
+    if (!form) return;
+    document.querySelectorAll('.btn-delete-property').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var url = this.getAttribute('data-delete-url');
+            var title = this.getAttribute('data-title') || 'Bu ilan';
+            if (url) form.action = url;
+            var titleEl = document.getElementById('deleteModalTitle');
+            if (titleEl) titleEl.textContent = title;
+        });
+    });
+})();
 </script>
 @endpush
 @endsection

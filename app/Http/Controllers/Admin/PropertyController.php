@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\City;
+use App\Models\District;
+use App\Models\Neighborhood;
 use App\Models\Property;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class PropertyController extends Controller
@@ -40,7 +44,16 @@ class PropertyController extends Controller
         if (! in_array($defaultType, ['konut', 'daire', 'arsa', 'isyeri', 'villa', 'mustakil'], true)) {
             $defaultType = 'daire';
         }
-        return view('admin.properties.create', ['defaultPropertyType' => $defaultType]);
+        $cities = City::orderBy('name')->get();
+        $districts = District::with('city')->orderBy('name')->get();
+        $neighborhoods = Neighborhood::with('district')->orderBy('name')->get();
+
+        return view('admin.properties.create', [
+            'defaultPropertyType' => $defaultType,
+            'cities' => $cities,
+            'districts' => $districts,
+            'neighborhoods' => $neighborhoods,
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -55,21 +68,25 @@ class PropertyController extends Controller
             'isyeri_turu' => ['nullable', 'string', 'max:100'],
             'bolum_oda_sayisi' => ['nullable', 'string', 'max:100'],
             'price' => ['required', 'numeric', 'min:0'],
+            'currency' => ['nullable', 'string', 'in:TRY,USD,EUR'],
             'city' => ['nullable', 'string', 'max:100'],
             'district' => ['nullable', 'string', 'max:100'],
+            'neighborhood' => ['nullable', 'string', 'max:100'],
             'address' => ['nullable', 'string'],
             'lokasyon' => ['nullable', 'string'],
             'rooms' => ['nullable', 'integer', 'min:0', 'max:50'],
-            'bathrooms' => ['nullable', 'integer', 'min:0', 'max:20'],
+            'salon' => ['nullable', 'integer', 'min:0', 'max:10'],
+            'room_layout' => ['nullable', 'string', Rule::in(array_keys(Property::roomLayoutOptions()))],
+            'bathrooms' => ['nullable', Rule::in(array_filter(array_keys(Property::bathroomsOptions())))],
             'area_sqm' => ['nullable', 'integer', 'min:0'],
             'area_brut' => ['nullable', 'integer', 'min:0'],
             'price_per_sqm' => ['nullable', 'numeric', 'min:0'],
-            'bina_yasi' => ['nullable', 'string', 'max:50'],
-            'bulundugu_kat' => ['nullable', 'string', 'max:20'],
-            'kat_sayisi' => ['nullable', 'integer', 'min:0', 'max:255'],
-            'isitma' => ['nullable', 'string', 'max:100'],
-            'mutfak' => ['nullable', 'string', 'max:100'],
-            'balkon' => ['nullable', 'string', 'max:100'],
+            'bina_yasi' => ['nullable', Rule::in(array_filter(array_keys(Property::binaYasiOptions())))],
+            'bulundugu_kat' => ['nullable', Rule::in(array_filter(array_keys(Property::bulunduguKatOptions())))],
+            'kat_sayisi' => ['nullable', Rule::in(array_filter(array_keys(Property::katSayisiOptions())))],
+            'isitma' => ['nullable', Rule::in(array_filter(array_keys(Property::isitmaOptions())))],
+            'mutfak' => ['nullable', Rule::in(array_filter(array_keys(Property::mutfakOptions())))],
+            'balkon' => ['nullable', 'string', 'max:10'],
             'asansor' => ['nullable', 'boolean'],
             'otopark' => ['nullable', 'string', 'max:100'],
             'esyali' => ['nullable', 'boolean'],
@@ -77,7 +94,8 @@ class PropertyController extends Controller
             'site_icerisinde' => ['nullable', 'boolean'],
             'site_adi' => ['nullable', 'string', 'max:255'],
             'aidat' => ['nullable', 'numeric', 'min:0'],
-            'image' => ['nullable', 'image', 'max:2048'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'max:2048'],
             'is_active' => ['boolean'],
             'is_featured' => ['boolean'],
             'ilan_no' => ['nullable', 'string', 'max:50'],
@@ -97,7 +115,10 @@ class PropertyController extends Controller
         ]);
 
         $validated['slug'] = Str::slug($validated['title']).'-'.uniqid();
+        $validated['currency'] = $validated['currency'] ?? 'TRY';
         $validated['user_id'] = $request->user()->id;
+        $validated['bathrooms'] = $request->filled('bathrooms') ? (int) $request->input('bathrooms') : null;
+        $validated['kat_sayisi'] = $request->filled('kat_sayisi') ? (int) $request->input('kat_sayisi') : null;
         $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured');
         $validated['krediye_uygunluk'] = $request->boolean('krediye_uygunluk');
@@ -108,18 +129,28 @@ class PropertyController extends Controller
         $validated['ilan_detay'] = $request->filled('ilan_detay') ? json_decode($request->ilan_detay, true) : null;
         $validated['arsa_ozellikler'] = $request->filled('arsa_ozellikler') ? json_decode($request->arsa_ozellikler, true) : null;
 
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('properties', 'public');
+        $files = $request->file('images');
+        if ($files && count($files) > 0) {
+            $validated['image'] = $files[0]->store('properties', 'public');
+            $gallery = [];
+            for ($i = 1; $i < count($files); $i++) {
+                $gallery[] = $files[$i]->store('properties', 'public');
+            }
+            $validated['gallery'] = $gallery;
         }
 
         Property::create($validated);
 
-        return redirect()->route('admin.properties.index')->with('success', 'İlan başarıyla eklendi.');
+        return redirect()->route('admin.dashboard')->with('success', 'İlan başarıyla eklendi.');
     }
 
     public function edit(Property $property): View
     {
-        return view('admin.properties.edit', compact('property'));
+        $cities = City::orderBy('name')->get();
+        $districts = District::with('city')->orderBy('name')->get();
+        $neighborhoods = Neighborhood::with('district')->orderBy('name')->get();
+
+        return view('admin.properties.edit', compact('property', 'cities', 'districts', 'neighborhoods'));
     }
 
     public function update(Request $request, Property $property): RedirectResponse
@@ -134,21 +165,25 @@ class PropertyController extends Controller
             'isyeri_turu' => ['nullable', 'string', 'max:100'],
             'bolum_oda_sayisi' => ['nullable', 'string', 'max:100'],
             'price' => ['required', 'numeric', 'min:0'],
+            'currency' => ['nullable', 'string', 'in:TRY,USD,EUR'],
             'city' => ['nullable', 'string', 'max:100'],
             'district' => ['nullable', 'string', 'max:100'],
+            'neighborhood' => ['nullable', 'string', 'max:100'],
             'address' => ['nullable', 'string'],
             'lokasyon' => ['nullable', 'string'],
             'rooms' => ['nullable', 'integer', 'min:0', 'max:50'],
-            'bathrooms' => ['nullable', 'integer', 'min:0', 'max:20'],
+            'salon' => ['nullable', 'integer', 'min:0', 'max:10'],
+            'room_layout' => ['nullable', 'string', Rule::in(array_keys(Property::roomLayoutOptions()))],
+            'bathrooms' => ['nullable', Rule::in(array_filter(array_keys(Property::bathroomsOptions())))],
             'area_sqm' => ['nullable', 'integer', 'min:0'],
             'area_brut' => ['nullable', 'integer', 'min:0'],
             'price_per_sqm' => ['nullable', 'numeric', 'min:0'],
-            'bina_yasi' => ['nullable', 'string', 'max:50'],
-            'bulundugu_kat' => ['nullable', 'string', 'max:20'],
-            'kat_sayisi' => ['nullable', 'integer', 'min:0', 'max:255'],
-            'isitma' => ['nullable', 'string', 'max:100'],
-            'mutfak' => ['nullable', 'string', 'max:100'],
-            'balkon' => ['nullable', 'string', 'max:100'],
+            'bina_yasi' => ['nullable', Rule::in(array_filter(array_keys(Property::binaYasiOptions())))],
+            'bulundugu_kat' => ['nullable', Rule::in(array_filter(array_keys(Property::bulunduguKatOptions())))],
+            'kat_sayisi' => ['nullable', Rule::in(array_filter(array_keys(Property::katSayisiOptions())))],
+            'isitma' => ['nullable', Rule::in(array_filter(array_keys(Property::isitmaOptions())))],
+            'mutfak' => ['nullable', Rule::in(array_filter(array_keys(Property::mutfakOptions())))],
+            'balkon' => ['nullable', 'string', 'max:10'],
             'asansor' => ['nullable', 'boolean'],
             'otopark' => ['nullable', 'string', 'max:100'],
             'esyali' => ['nullable', 'boolean'],
@@ -157,6 +192,8 @@ class PropertyController extends Controller
             'site_adi' => ['nullable', 'string', 'max:255'],
             'aidat' => ['nullable', 'numeric', 'min:0'],
             'image' => ['nullable', 'image', 'max:2048'],
+            'gallery_new' => ['nullable', 'array'],
+            'gallery_new.*' => ['image', 'max:2048'],
             'is_active' => ['boolean'],
             'is_featured' => ['boolean'],
             'ilan_no' => ['nullable', 'string', 'max:50'],
@@ -177,6 +214,8 @@ class PropertyController extends Controller
 
         $validated['is_active'] = $request->boolean('is_active');
         $validated['is_featured'] = $request->boolean('is_featured');
+        $validated['bathrooms'] = $request->filled('bathrooms') ? (int) $request->input('bathrooms') : null;
+        $validated['kat_sayisi'] = $request->filled('kat_sayisi') ? (int) $request->input('kat_sayisi') : null;
         $validated['krediye_uygunluk'] = $request->boolean('krediye_uygunluk');
         $validated['takas'] = $request->boolean('takas');
         $validated['asansor'] = $request->boolean('asansor');
@@ -187,6 +226,15 @@ class PropertyController extends Controller
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('properties', 'public');
+        }
+        $galleryNew = $request->file('gallery_new');
+        if ($galleryNew && count($galleryNew) > 0) {
+            $existing = $property->gallery ?? [];
+            $added = [];
+            foreach ($galleryNew as $file) {
+                $added[] = $file->store('properties', 'public');
+            }
+            $validated['gallery'] = array_merge($existing, $added);
         }
 
         $property->update($validated);

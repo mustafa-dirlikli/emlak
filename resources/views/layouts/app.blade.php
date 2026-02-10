@@ -4,7 +4,7 @@
     <title>@yield('title', config('app.name'))</title>
     @include('layouts.partials.head')
 </head>
-<body>
+<body class="{{ request()->routeIs('home') ? '' : 'inner-page' }}">
 
 <div class="site-loader"></div>
 
@@ -12,7 +12,9 @@
 
     @include('layouts.partials.navbar')
 
-    @yield('content')
+    <main class="site-main">
+        @yield('content')
+    </main>
 
     @include('layouts.partials.footer')
 

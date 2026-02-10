@@ -8,15 +8,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PropertyListingController::class, 'home'])->name('home');
 
-Route::get('/satilik', function () {
-    return view('buy');
-})->name('buy');
-
-Route::get('/kiralik', function () {
-    return view('rent');
-})->name('rent');
+Route::get('/satilik', [PropertyListingController::class, 'buy'])->name('buy');
+Route::get('/kiralik', [PropertyListingController::class, 'rent'])->name('rent');
 
 Route::get('/ilanlar', [PropertyListingController::class, 'index'])->name('properties');
+Route::get('/ilan/{property}', [PropertyListingController::class, 'show'])->name('properties.show');
 
 Route::get('/blog', function () {
     return view('blog');
@@ -38,6 +34,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware(['auth', 'admin'])->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/api/cities', [\App\Http\Controllers\Admin\LocationApiController::class, 'cities'])->name('api.cities');
+        Route::get('/api/districts', [\App\Http\Controllers\Admin\LocationApiController::class, 'districts'])->name('api.districts');
+        Route::get('/api/neighborhoods', [\App\Http\Controllers\Admin\LocationApiController::class, 'neighborhoods'])->name('api.neighborhoods');
         Route::resource('properties', PropertyController::class)->except(['show']);
     });
 });

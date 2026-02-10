@@ -12,8 +12,8 @@
         <div class="row align-items-center">
             <div class="col-8 col-md-8 col-lg-4">
                 <h1 class="mb-0">
-                    <a href="{{ url('/') }}" class="text-white h2 mb-0">
-                        <strong>{{ config('app.name', 'Emremlak') }}<span class="text-danger">.</span></strong>
+                    <a href="{{ route('home') }}" class="text-white h2 mb-0">
+                        <strong>EMREMLAK<span class="text-danger">.</span></strong>
                     </a>
                 </h1>
             </div>
@@ -24,14 +24,16 @@
                     </div>
                     <ul class="site-menu js-clone-nav d-none d-lg-block">
                         <li class="{{ request()->routeIs('home') ? 'active' : '' }}">
-                            <a href="{{ url('/') }}">Ana Sayfa</a>
+                            <a href="{{ route('home') }}">Ana Sayfa</a>
                         </li>
                         <li class="{{ request()->routeIs('buy') ? 'active' : '' }}"><a href="{{ route('buy') }}">Satılık</a></li>
                         <li class="{{ request()->routeIs('rent') ? 'active' : '' }}"><a href="{{ route('rent') }}">Kiralık</a></li>
-                        <li class="has-children {{ request()->routeIs('properties') ? 'active' : '' }}">
+                        <li class="has-children {{ request()->routeIs('properties') || request()->routeIs('buy') || request()->routeIs('rent') ? 'active' : '' }}">
                             <a href="{{ route('properties') }}">İlanlar</a>
                             <ul class="dropdown arrow-top">
-                                <li><a href="{{ route('properties') }}">Tümü</a></li>
+                                <li><a href="{{ route('properties') }}">Tüm İlanlar</a></li>
+                                <li><a href="{{ route('buy') }}">Satılık</a></li>
+                                <li><a href="{{ route('rent') }}">Kiralık</a></li>
                                 <li><a href="{{ route('properties', ['type' => 'daire']) }}">Daire</a></li>
                                 <li><a href="{{ route('properties', ['type' => 'arsa']) }}">Arsa</a></li>
                                 <li><a href="{{ route('properties', ['type' => 'isyeri']) }}">İş Yeri</a></li>

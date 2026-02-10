@@ -21,5 +21,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@emremlak.com'],
             ['name' => 'Admin', 'password' => bcrypt('password'), 'is_admin' => true]
         );
+
+        $this->call([LocationSeeder::class]);
     }
 }

@@ -9,13 +9,13 @@
             <div class="col-md-7 text-center">
                 <div class="site-section-title">
                     <h2>İletişim</h2>
-                    <p>Bizimle iletişime geçin.</p>
+                    <p>İlanlar ve hizmetlerimiz hakkında sorularınız için bize yazın.</p>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-7 mb-5">
-                <form action="#" method="post" class="p-5 bg-white">
+                <form action="#" method="post" class="p-5 bg-white border rounded">
                     @csrf
                     <div class="row form-group">
                         <div class="col-md-6 mb-3 mb-md-0">
@@ -30,7 +30,7 @@
                     <div class="row form-group">
                         <div class="col-md-12">
                             <label class="text-black" for="subject">Konu</label>
-                            <input type="text" id="subject" name="subject" class="form-control rounded-0" required>
+                            <input type="text" id="subject" name="subject" class="form-control rounded-0" placeholder="Örn: Satılık daire, kiralık iş yeri" required>
                         </div>
                     </div>
                     <div class="row form-group">
@@ -41,25 +41,26 @@
                     </div>
                     <div class="row form-group">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-success py-2 px-4 rounded-0">Gönder</button>
+                            <button type="submit" class="btn btn-primary py-2 px-4 rounded-0">Gönder</button>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="col-md-5">
-                <div class="p-4 mb-3 bg-white rounded">
+                <div class="p-4 mb-3 bg-white border rounded">
                     <span class="d-block text-black h6 mb-3">Adres</span>
-                    <p class="mb-0">Örnek Mahalle, Örnek Sokak No:1</p>
-                    <p class="mb-0">İstanbul, Türkiye</p>
+                    <p class="mb-0">Merkez ofis adresinizi buraya yazabilirsiniz.</p>
+                    <p class="mb-0 text-muted">Şehir, Türkiye</p>
                 </div>
-                <div class="p-4 mb-3 bg-white rounded">
+                <div class="p-4 mb-3 bg-white border rounded">
                     <span class="d-block text-black h6 mb-3">Telefon</span>
                     <p class="mb-0">+90 (212) 000 00 00</p>
                 </div>
-                <div class="p-4 mb-3 bg-white rounded">
+                <div class="p-4 mb-3 bg-white border rounded">
                     <span class="d-block text-black h6 mb-3">E-posta</span>
                     <p class="mb-0">info@emremlak.com</p>
                 </div>
+                <p class="text-muted small">İlan vermek veya randevu almak için formu doldurmanız yeterli.</p>
             </div>
         </div>
     </div>

@@ -16,5 +16,50 @@
 <link rel="stylesheet" href="{{ asset('tema/css/fl-bigmug-line.css') }}">
 <link rel="stylesheet" href="{{ asset('tema/css/aos.css') }}">
 <link rel="stylesheet" href="{{ asset('tema/css/style.css') }}">
-
+<style>
+  /* Navbar: tüm sayfalarda koyu arka plan, yazılar okunaklı */
+  .site-navbar {
+    background: #25262a !important;
+  }
+  body.inner-page .site-navbar {
+    position: relative;
+  }
+  .site-navbar .site-logo a,
+  .site-navbar .site-navigation .site-menu > li > a,
+  .site-navbar .site-menu-toggle {
+    color: #fff !important;
+  }
+  .site-navbar .site-navigation .site-menu > li > a:hover {
+    color: #fff !important;
+    opacity: 1;
+  }
+  .site-navbar .site-navigation .site-menu .active > a {
+    color: #fff !important;
+  }
+  /* İç sayfalarda içerik navbar altında başlasın (navbar artık relative, ekstra padding gerekmez) */
+  .inner-page .site-main {
+    padding-top: 0;
+  }
+  /* Footer: koyu arka plan, okunaklı metin */
+  .site-footer {
+    background: #25262a !important;
+    color: #a0aec0;
+  }
+  .site-footer .footer-heading,
+  .site-footer h3 {
+    color: #fff !important;
+  }
+  .site-footer a {
+    color: #a0aec0 !important;
+  }
+  .site-footer a:hover {
+    color: #fff !important;
+  }
+  .site-footer p {
+    color: #a0aec0 !important;
+  }
+  .site-footer .text-center p {
+    color: #888 !important;
+  }
+</style>
 @stack('styles')
