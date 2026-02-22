@@ -36,17 +36,17 @@
 <div class="site-section site-section-sm pb-0">
     <div class="container">
         <div class="row">
-            <form class="form-search col-md-12" style="margin-top: -100px;" action="{{ route('properties') }}" method="GET">
+            <form class="form-search col-md-12" style="margin-top: -100px;" action="{{ route('home') }}" method="GET" id="home-filter-form">
                 <div class="row align-items-end">
                     <div class="col-md-3">
                         <label for="list-types">İlan Tipi</label>
                         <div class="select-wrap">
                             <span class="icon icon-arrow_drop_down"></span>
                             <select name="type" id="list-types" class="form-control d-block rounded-0">
-                                <option value="">Tümü</option>
-                                <option value="daire">Daire</option>
-                                <option value="arsa">Arsa</option>
-                                <option value="isyeri">İş Yeri</option>
+                                <option value="" {{ request('type') == '' ? 'selected' : '' }}>Tümü</option>
+                                <option value="daire" {{ request('type') == 'daire' ? 'selected' : '' }}>Daire</option>
+                                <option value="arsa" {{ request('type') == 'arsa' ? 'selected' : '' }}>Arsa</option>
+                                <option value="isyeri" {{ request('type') == 'isyeri' ? 'selected' : '' }}>İş Yeri</option>
                             </select>
                         </div>
                     </div>
@@ -55,9 +55,9 @@
                         <div class="select-wrap">
                             <span class="icon icon-arrow_drop_down"></span>
                             <select name="offer" id="offer-types" class="form-control d-block rounded-0">
-                                <option value="">Tümü</option>
-                                <option value="sale">Satılık</option>
-                                <option value="rent">Kiralık</option>
+                                <option value="" {{ request('offer') == '' ? 'selected' : '' }}>Tümü</option>
+                                <option value="sale" {{ request('offer') == 'sale' ? 'selected' : '' }}>Satılık</option>
+                                <option value="rent" {{ request('offer') == 'rent' ? 'selected' : '' }}>Kiralık</option>
                             </select>
                         </div>
                     </div>
@@ -66,10 +66,11 @@
                         <div class="select-wrap">
                             <span class="icon icon-arrow_drop_down"></span>
                             <select name="city" id="select-city" class="form-control d-block rounded-0">
-                                <option value="">Tümü</option>
-                                <option value="istanbul">İstanbul</option>
-                                <option value="ankara">Ankara</option>
-                                <option value="izmir">İzmir</option>
+                                <option value="" {{ request('city') == '' ? 'selected' : '' }}>Tümü</option>
+                                <option value="istanbul" {{ request('city') == 'istanbul' ? 'selected' : '' }}>İstanbul</option>
+                                <option value="ankara" {{ request('city') == 'ankara' ? 'selected' : '' }}>Ankara</option>
+                                <option value="izmir" {{ request('city') == 'izmir' ? 'selected' : '' }}>İzmir</option>
+                                <option value="antalya" {{ request('city') == 'antalya' ? 'selected' : '' }}>Antalya</option>
                             </select>
                         </div>
                     </div>
@@ -83,22 +84,22 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="view-options bg-white py-3 px-3 d-md-flex align-items-center">
-                    <div class="mr-auto">
-                        <a href="{{ url('/') }}" class="icon-view view-module active"><span class="icon-view_module"></span></a>
-                        <a href="{{ route('properties') }}?view=list" class="icon-view view-list"><span class="icon-view_list"></span></a>
+                    <div class="mr-auto d-flex align-items-center">
+                        <a href="{{ route('home') }}" class="icon-view view-module active mr-2" id="view-module" title="Kart görünümü"><span class="icon-view_module"></span></a>
+                        <a href="{{ route('properties') }}?view=list" class="icon-view view-list" id="view-list-link" title="Liste görünümü"><span class="icon-view_list"></span></a>
                     </div>
                     <div class="ml-auto d-flex align-items-center">
                         <div>
-                            <a href="{{ route('properties') }}" class="view-list px-3 border-right active">Tümü</a>
-                            <a href="{{ route('rent') }}" class="view-list px-3 border-right">Kiralık</a>
-                            <a href="{{ route('buy') }}" class="view-list px-3">Satılık</a>
+                            <a href="#" class="view-option-link view-list px-3 border-right {{ !request('offer') ? 'active' : '' }}" data-offer="">Tümü</a>
+                            <a href="#" class="view-option-link view-list px-3 border-right {{ request('offer') === 'rent' ? 'active' : '' }}" data-offer="rent">Kiralık</a>
+                            <a href="#" class="view-option-link view-list px-3 {{ request('offer') === 'sale' ? 'active' : '' }}" data-offer="sale">Satılık</a>
                         </div>
                         <div class="select-wrap">
                             <span class="icon icon-arrow_drop_down"></span>
-                            <select class="form-control form-control-sm d-block rounded-0">
-                                <option value="">Sırala</option>
-                                <option value="price_asc">Fiyat (Artan)</option>
-                                <option value="price_desc">Fiyat (Azalan)</option>
+                            <select class="form-control form-control-sm d-block rounded-0" name="sort" id="home-sort">
+                                <option value="" {{ request('sort') == '' ? 'selected' : '' }}>Sırala</option>
+                                <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Fiyat (Artan)</option>
+                                <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Fiyat (Azalan)</option>
                             </select>
                         </div>
                     </div>
@@ -110,58 +111,8 @@
 
 <div class="site-section site-section-sm bg-light">
     <div class="container">
-        <div class="row mb-5">
-            @forelse($featuredProperties ?? [] as $property)
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="property-entry h-100">
-                    <a href="{{ route('properties.show', $property) }}" class="property-thumbnail">
-                        <div class="offer-type-wrap">
-                            @if($property->listing_type === 'sale')
-                                <span class="offer-type bg-danger">Satılık</span>
-                            @else
-                                <span class="offer-type bg-success">Kiralık</span>
-                            @endif
-                        </div>
-                        <img src="{{ $property->image ? asset('storage/'.$property->image) : asset('tema/images/img_1.jpg') }}" alt="{{ $property->title }}" class="img-fluid" style="width:100%;height:280px;object-fit:cover;display:block;">
-                    </a>
-                    <div class="p-4 property-body">
-                        <a href="{{ route('properties.show', $property) }}" class="property-favorite"><span class="icon-heart-o"></span></a>
-                        <h2 class="property-title"><a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a></h2>
-                        <span class="property-location d-block mb-3"><span class="property-icon icon-room"></span> {{ $property->address ?? $property->city ?? '—' }}</span>
-                        <strong class="property-price text-primary mb-3 d-block text-success">{{ $property->currency_symbol }}{{ number_format($property->price, 0, ',', '.') }}</strong>
-                        <ul class="property-specs-wrap mb-3 mb-lg-0">
-                            <li><span class="property-specs">Oda+Salon</span><span class="property-specs-number">{{ $property->oda_salon }}</span></li>
-                            <li><span class="property-specs">m²</span><span class="property-specs-number">{{ $property->area_sqm ?? '—' }}</span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            @empty
-            @foreach([1,2,3,4,5,6] as $i)
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="property-entry h-100">
-                    <a href="{{ route('properties') }}" class="property-thumbnail">
-                        <div class="offer-type-wrap">
-                            <span class="offer-type bg-danger">Satılık</span>
-                            <span class="offer-type bg-success">Kiralık</span>
-                        </div>
-                        <img src="{{ asset('tema/images/img_' . (($i - 1) % 8 + 1) . '.jpg') }}" alt="İlan" class="img-fluid">
-                    </a>
-                    <div class="p-4 property-body">
-                        <a href="#" class="property-favorite"><span class="icon-heart-o"></span></a>
-                        <h2 class="property-title"><a href="{{ route('properties') }}">Örnek Emlak İlanı {{ $i }}</a></h2>
-                        <span class="property-location d-block mb-3"><span class="property-icon icon-room"></span> Örnek Adres, Şehir</span>
-                        <strong class="property-price text-primary mb-3 d-block text-success">₺2.265.500</strong>
-                        <ul class="property-specs-wrap mb-3 mb-lg-0">
-                            <li><span class="property-specs">Oda</span><span class="property-specs-number">2 <sup>+</sup></span></li>
-                            <li><span class="property-specs">Banyo</span><span class="property-specs-number">2</span></li>
-                            <li><span class="property-specs">m²</span><span class="property-specs-number">150</span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-            @endforelse
+        <div class="row mb-5" id="home-property-cards">
+            @include('partials.home-property-cards', ['featuredProperties' => $featuredProperties ?? collect()])
         </div>
         <div class="row">
             <div class="col-md-12 text-center">
@@ -175,99 +126,116 @@
     </div>
 </div>
 
-<div class="site-section">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-7 text-center">
-                <div class="site-section-title">
-                    <h2>Neden Bizi Seçmelisiniz?</h2>
-                </div>
-                <p>Güvenilir emlak danışmanlığı, geniş ilan portföyü ve müşteri memnuniyeti odaklı hizmet anlayışımızla yanınızdayız.</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6 col-lg-4">
-                <a href="{{ route('about') }}" class="service text-center">
-                    <span class="icon flaticon-house"></span>
-                    <h2 class="service-heading">Araştırma</h2>
-                    <p>Bölge ve fiyat analizleri ile doğru yatırım kararları.</p>
-                    <p><span class="read-more">Devamı</span></p>
-                </a>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <a href="{{ route('properties') }}" class="service text-center">
-                    <span class="icon flaticon-sold"></span>
-                    <h2 class="service-heading">Satılık İlanlar</h2>
-                    <p>Geniş satılık emlak seçenekleri.</p>
-                    <p><span class="read-more">Devamı</span></p>
-                </a>
-            </div>
-            <div class="col-md-6 col-lg-4">
-                <a href="{{ route('contact') }}" class="service text-center">
-                    <span class="icon flaticon-camera"></span>
-                    <h2 class="service-heading">Güvenlik</h2>
-                    <p>Güvenli alım satım süreçleri ve hukuki destek.</p>
-                    <p><span class="read-more">Devamı</span></p>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+@push('scripts')
+<script>
+(function() {
+    var form = document.getElementById('home-filter-form');
+    var container = document.getElementById('home-property-cards');
+    var listTypes = document.getElementById('list-types');
+    var offerTypes = document.getElementById('offer-types');
+    var selectCity = document.getElementById('select-city');
+    var homeSort = document.getElementById('home-sort');
+    var filterUrl = '{{ route("home.filter") }}';
+    var propertiesUrl = '{{ route("properties") }}';
 
-<div class="site-section bg-light">
-    <div class="container">
-        <div class="row justify-content-center mb-5">
-            <div class="col-md-7 text-center">
-                <div class="site-section-title">
-                    <h2>Son Blog Yazıları</h2>
-                </div>
-                <p>Emlak ve yaşam alanları hakkında güncel içerikler.</p>
-            </div>
-        </div>
-        <div class="row">
-            @foreach([4,2,3] as $i)
-            <div class="col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="{{ $i * 100 }}">
-                <a href="{{ route('blog') }}"><img src="{{ asset('tema/images/img_' . $i . '.jpg') }}" alt="Blog" class="img-fluid"></a>
-                <div class="p-4 bg-white">
-                    <span class="d-block text-secondary small text-uppercase">{{ now()->format('d M Y') }}</span>
-                    <h2 class="h5 text-black mb-3"><a href="{{ route('blog') }}">Örnek Blog Başlığı</a></h2>
-                    <p>Emlak sektörü ve yaşam alanları hakkında bilgilendirici içerik.</p>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-</div>
+    function getFilterParams() {
+        var params = new URLSearchParams();
+        if (listTypes && listTypes.value) params.set('type', listTypes.value);
+        if (offerTypes && offerTypes.value) params.set('offer', offerTypes.value);
+        if (selectCity && selectCity.value) params.set('city', selectCity.value);
+        if (homeSort && homeSort.value) params.set('sort', homeSort.value);
+        return params.toString();
+    }
 
-<div class="site-section">
-    <div class="container">
-        <div class="row mb-5 justify-content-center">
-            <div class="col-md-7">
-                <div class="site-section-title text-center">
-                    <h2>Danışmanlarımız</h2>
-                    <p>Deneyimli emlak danışmanlarımız size en uygun çözümü sunmak için hazır.</p>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            @foreach([1,2,3] as $i)
-            <div class="col-md-6 col-lg-4 mb-5 mb-lg-5">
-                <div class="team-member">
-                    <img src="{{ asset('tema/images/person_' . $i . '.jpg') }}" alt="Danışman" class="img-fluid rounded mb-4">
-                    <div class="text">
-                        <h2 class="mb-2 font-weight-light text-black h4">Danışman {{ $i }}</h2>
-                        <span class="d-block mb-3 text-white-opacity-05">Emlak Danışmanı</span>
-                        <p>Profesyonel emlak danışmanlığı hizmeti.</p>
-                        <p>
-                            <a href="#" class="text-black p-2"><span class="icon-facebook"></span></a>
-                            <a href="#" class="text-black p-2"><span class="icon-twitter"></span></a>
-                            <a href="#" class="text-black p-2"><span class="icon-linkedin"></span></a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-</div>
+    function setOfferActiveState(offerValue) {
+        var links = document.querySelectorAll('.view-option-link');
+        links.forEach(function(link) {
+            var isActive = (link.getAttribute('data-offer') || '') === (offerValue || '');
+            link.classList.toggle('active', isActive);
+        });
+    }
+
+    function loadFiltered() {
+        var query = getFilterParams();
+        var url = query ? filterUrl + '?' + query : filterUrl;
+        if (container) {
+            container.style.opacity = '0.6';
+            container.style.pointerEvents = 'none';
+        }
+        fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'text/html' } })
+            .then(function(r) { return r.text(); })
+            .then(function(html) {
+                if (container) {
+                    container.innerHTML = html;
+                    container.style.opacity = '';
+                    container.style.pointerEvents = '';
+                }
+                if (typeof history !== 'undefined' && history.replaceState) {
+                    var newUrl = window.location.pathname + (query ? '?' + query : '');
+                    history.replaceState({}, '', newUrl);
+                }
+                setOfferActiveState(offerTypes ? offerTypes.value : '');
+            })
+            .catch(function() {
+                if (container) {
+                    container.style.opacity = '';
+                    container.style.pointerEvents = '';
+                }
+            });
+    }
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            loadFiltered();
+        });
+    }
+    if (listTypes) listTypes.addEventListener('change', loadFiltered);
+    if (offerTypes) {
+        offerTypes.addEventListener('change', function() {
+            setOfferActiveState(offerTypes.value);
+            loadFiltered();
+        });
+    }
+    if (selectCity) selectCity.addEventListener('change', loadFiltered);
+    if (homeSort) homeSort.addEventListener('change', loadFiltered);
+
+    document.querySelectorAll('.view-option-link').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            var offer = this.getAttribute('data-offer') || '';
+            if (offerTypes) offerTypes.value = offer;
+            setOfferActiveState(offer);
+            loadFiltered();
+        });
+    });
+
+    function setViewIconActive(activeView) {
+        var viewModule = document.getElementById('view-module');
+        var viewList = document.getElementById('view-list-link');
+        if (viewModule) viewModule.classList.toggle('active', activeView === 'module');
+        if (viewList) viewList.classList.toggle('active', activeView === 'list');
+    }
+
+    var viewModuleLink = document.getElementById('view-module');
+    if (viewModuleLink) {
+        viewModuleLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            setViewIconActive('module');
+        });
+    }
+
+    var viewListLink = document.getElementById('view-list-link');
+    if (viewListLink) {
+        viewListLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            setViewIconActive('list');
+            var query = getFilterParams();
+            var url = propertiesUrl + (query ? '?' + query + '&view=list' : '?view=list');
+            window.location.href = url;
+        });
+    }
+})();
+</script>
+@endpush
 @endsection

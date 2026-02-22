@@ -7,6 +7,7 @@ use App\Http\Controllers\PropertyListingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PropertyListingController::class, 'home'])->name('home');
+Route::get('/api/home-filter', [PropertyListingController::class, 'homeFilter'])->name('home.filter');
 
 Route::get('/satilik', [PropertyListingController::class, 'buy'])->name('buy');
 Route::get('/kiralik', [PropertyListingController::class, 'rent'])->name('rent');

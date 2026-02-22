@@ -112,8 +112,8 @@
                             @if($property->area_sqm !== null && $property->area_sqm != '')
                                 <tr><td class="text-muted">m² (Net)</td><td>{{ $property->area_sqm }}</td></tr>
                             @endif
-                            @if(($property->rooms !== null && $property->rooms != '') || ($property->salon !== null && $property->salon != ''))
-                                <tr><td class="text-muted">Oda + Salon</td><td>{{ $property->oda_salon }}</td></tr>
+                            @if(!$property->isArsaType() && (($property->rooms !== null && $property->rooms != '') || ($property->salon !== null && $property->salon != '')))
+                                <tr><td class="text-muted">Oda Sayısı</td><td>{{ $property->oda_salon }}</td></tr>
                             @endif
                             @if($property->bina_yasi !== null && $property->bina_yasi != '')
                                 <tr><td class="text-muted">Bina Yaşı</td><td>{{ $property->bina_yasi }}</td></tr>

@@ -28,12 +28,13 @@
                         <img src="{{ $property->image ? asset('storage/'.$property->image) : asset('tema/images/img_1.jpg') }}" alt="{{ $property->title }}" class="img-fluid" style="width:100%;height:280px;object-fit:cover;display:block;">
                     </a>
                     <div class="p-4 property-body">
-                        <a href="{{ route('properties.show', $property) }}" class="property-favorite"><span class="icon-heart-o"></span></a>
                         <h2 class="property-title"><a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a></h2>
                         <span class="property-location d-block mb-3"><span class="property-icon icon-room"></span> {{ $property->address ?? $property->city ?? '—' }}</span>
                         <strong class="property-price text-primary mb-3 d-block text-success">{{ $property->currency_symbol }}{{ number_format($property->price, 0, ',', '.') }}</strong>
                         <ul class="property-specs-wrap mb-3 mb-lg-0">
-                            <li><span class="property-specs">Oda+Salon</span><span class="property-specs-number">{{ $property->oda_salon }}</span></li>
+                            @if(!$property->isArsaType())
+                                <li><span class="property-specs">Oda Sayısı</span><span class="property-specs-number">{{ $property->oda_salon }}</span></li>
+                            @endif
                             <li><span class="property-specs">m²</span><span class="property-specs-number">{{ $property->area_sqm ?? '—' }}</span></li>
                         </ul>
                     </div>

@@ -28,7 +28,9 @@
                         <span class="property-location d-block mb-3"><span class="property-icon icon-room"></span> {{ $property->address ?? $property->city ?? '—' }}</span>
                         <strong class="property-price text-primary mb-3 d-block">{{ $property->currency_symbol }}{{ number_format($property->price, 0, ',', '.') }}/ay</strong>
                         <ul class="property-specs-wrap mb-0">
-                            <li><span class="property-specs">Oda+Salon</span><span class="property-specs-number">{{ $property->oda_salon }}</span></li>
+                            @if(!$property->isArsaType())
+                                <li><span class="property-specs">Oda Sayısı</span><span class="property-specs-number">{{ $property->oda_salon }}</span></li>
+                            @endif
                             <li><span class="property-specs">m²</span><span class="property-specs-number">{{ $property->area_sqm ?? '—' }}</span></li>
                         </ul>
                     </div>

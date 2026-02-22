@@ -31,10 +31,43 @@ class PropertyListingController extends Controller
         return view('properties', compact('properties'));
     }
 
-    public function home(): View
+    public function home(Request $request): View
     {
-        $featuredProperties = Property::where('is_active', true)->latest()->take(6)->get();
+        $query = Property::where('is_active', true)
+            ->when($request->type, fn ($q, $v) => $q->where('property_type', $v))
+            ->when($request->offer === 'sale', fn ($q) => $q->where('listing_type', 'sale'))
+            ->when($request->offer === 'rent', fn ($q) => $q->where('listing_type', 'rent'))
+            ->when($request->city, fn ($q, $v) => $q->where('city', 'like', '%'.$v.'%'));
+        if ($request->sort === 'price_asc') {
+            $query->orderBy('price', 'asc');
+        } elseif ($request->sort === 'price_desc') {
+            $query->orderBy('price', 'desc');
+        } else {
+            $query->latest();
+        }
+        $featuredProperties = $query->take(6)->get();
+
         return view('home', compact('featuredProperties'));
+    }
+
+    /** Filtrelenmiş ilan kartları (AJAX, sayfa yenilemeden) */
+    public function homeFilter(Request $request)
+    {
+        $query = Property::where('is_active', true)
+            ->when($request->type, fn ($q, $v) => $q->where('property_type', $v))
+            ->when($request->offer === 'sale', fn ($q) => $q->where('listing_type', 'sale'))
+            ->when($request->offer === 'rent', fn ($q) => $q->where('listing_type', 'rent'))
+            ->when($request->city, fn ($q, $v) => $q->where('city', 'like', '%'.$v.'%'));
+        if ($request->sort === 'price_asc') {
+            $query->orderBy('price', 'asc');
+        } elseif ($request->sort === 'price_desc') {
+            $query->orderBy('price', 'desc');
+        } else {
+            $query->latest();
+        }
+        $featuredProperties = $query->take(6)->get();
+
+        return response()->view('partials.home-property-cards', compact('featuredProperties'))->header('Content-Type', 'text/html; charset=UTF-8');
     }
 
     public function buy(Request $request): View
