@@ -38,7 +38,7 @@
         <div class="row">
             <form class="form-search col-md-12" style="margin-top: -100px;" action="{{ route('home') }}" method="GET" id="home-filter-form">
                 <div class="row align-items-end">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="list-types">İlan Tipi</label>
                         <div class="select-wrap">
                             <span class="icon icon-arrow_drop_down"></span>
@@ -50,7 +50,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="offer-types">İşlem Tipi</label>
                         <div class="select-wrap">
                             <span class="icon icon-arrow_drop_down"></span>
@@ -61,7 +61,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="select-city">Şehir</label>
                         <div class="select-wrap">
                             <span class="icon icon-arrow_drop_down"></span>
@@ -74,9 +74,6 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <button type="submit" class="btn btn-success text-white btn-block rounded-0">Ara</button>
-                    </div>
                 </div>
             </form>
         </div>
@@ -86,7 +83,7 @@
                 <div class="view-options bg-white py-3 px-3 d-md-flex align-items-center">
                     <div class="mr-auto d-flex align-items-center">
                         <a href="{{ route('home') }}" class="icon-view view-module active mr-2" id="view-module" title="Kart görünümü"><span class="icon-view_module"></span></a>
-                        <a href="{{ route('properties') }}?view=list" class="icon-view view-list" id="view-list-link" title="Liste görünümü"><span class="icon-view_list"></span></a>
+                        <a href="#" class="icon-view view-list" id="view-list-link" title="Liste görünümü"><span class="icon-view_list"></span></a>
                     </div>
                     <div class="ml-auto d-flex align-items-center">
                         <div>
@@ -94,9 +91,9 @@
                             <a href="#" class="view-option-link view-list px-3 border-right {{ request('offer') === 'rent' ? 'active' : '' }}" data-offer="rent">Kiralık</a>
                             <a href="#" class="view-option-link view-list px-3 {{ request('offer') === 'sale' ? 'active' : '' }}" data-offer="sale">Satılık</a>
                         </div>
-                        <div class="select-wrap">
+                        <div class="select-wrap" style="min-width: 180px;">
                             <span class="icon icon-arrow_drop_down"></span>
-                            <select class="form-control form-control-sm d-block rounded-0" name="sort" id="home-sort">
+                            <select class="form-control form-control-sm d-block rounded-0" name="sort" id="home-sort" style="min-width: 160px;">
                                 <option value="" {{ request('sort') == '' ? 'selected' : '' }}>Sırala</option>
                                 <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Fiyat (Artan)</option>
                                 <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Fiyat (Azalan)</option>
@@ -111,17 +108,8 @@
 
 <div class="site-section site-section-sm bg-light">
     <div class="container">
-        <div class="row mb-5" id="home-property-cards">
-            @include('partials.home-property-cards', ['featuredProperties' => $featuredProperties ?? collect()])
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <div class="site-pagination">
-                    <a href="{{ route('properties') }}" class="active">1</a>
-                    <a href="{{ route('properties') }}?page=2">2</a>
-                    <a href="{{ route('properties') }}?page=3">3</a>
-                </div>
-            </div>
+        <div id="home-property-results">
+            @include('partials.home-property-results', ['featuredProperties' => $featuredProperties ?? new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15), 'layout' => 'card'])
         </div>
     </div>
 </div>
@@ -130,13 +118,14 @@
 <script>
 (function() {
     var form = document.getElementById('home-filter-form');
-    var container = document.getElementById('home-property-cards');
+    var container = document.getElementById('home-property-results');
     var listTypes = document.getElementById('list-types');
     var offerTypes = document.getElementById('offer-types');
     var selectCity = document.getElementById('select-city');
     var homeSort = document.getElementById('home-sort');
     var filterUrl = '{{ route("home.filter") }}';
     var propertiesUrl = '{{ route("properties") }}';
+    var currentView = 'card';
 
     function getFilterParams() {
         var params = new URLSearchParams();
@@ -144,6 +133,7 @@
         if (offerTypes && offerTypes.value) params.set('offer', offerTypes.value);
         if (selectCity && selectCity.value) params.set('city', selectCity.value);
         if (homeSort && homeSort.value) params.set('sort', homeSort.value);
+        params.set('layout', currentView);
         return params.toString();
     }
 
@@ -221,7 +211,10 @@
     if (viewModuleLink) {
         viewModuleLink.addEventListener('click', function(e) {
             e.preventDefault();
+            if (currentView === 'card') return;
+            currentView = 'card';
             setViewIconActive('module');
+            loadFiltered();
         });
     }
 
@@ -229,10 +222,10 @@
     if (viewListLink) {
         viewListLink.addEventListener('click', function(e) {
             e.preventDefault();
+            if (currentView === 'list') return;
+            currentView = 'list';
             setViewIconActive('list');
-            var query = getFilterParams();
-            var url = propertiesUrl + (query ? '?' + query + '&view=list' : '?view=list');
-            window.location.href = url;
+            loadFiltered();
         });
     }
 })();

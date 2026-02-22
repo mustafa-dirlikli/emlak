@@ -436,9 +436,13 @@
                 <div class="form-group mb-3">
                     <label for="image">Ana Görsel</label>
                     @if($property->image)
-                        <div class="mb-2">
-                            <img src="{{ asset('storage/'.$property->image) }}" alt="" class="img-fluid rounded border" style="max-height:120px">
-                            <small class="text-muted d-block">Mevcut ana görsel</small>
+                        <div class="mb-2 position-relative d-inline-block">
+                            <img src="{{ asset('storage/'.$property->image) }}" alt="" class="img-fluid rounded border" style="max-height:120px" id="current-main-image">
+                            <div class="mt-1">
+                                <label class="mb-0">
+                                    <input type="checkbox" name="remove_main" value="1" class="remove-main-check"> Ana görseli kaldır
+                                </label>
+                            </div>
                         </div>
                     @endif
                     <input type="file" name="image" id="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
@@ -448,11 +452,17 @@
                 <div class="form-group mb-3">
                     <label>Galeri ({{ is_array($property->gallery) ? count($property->gallery) : 0 }} görsel)</label>
                     @if($property->gallery && count($property->gallery) > 0)
-                        <div class="d-flex flex-wrap gap-2 mb-2">
+                        <div class="d-flex flex-wrap gap-3 mb-2">
                             @foreach($property->gallery as $g)
-                                <img src="{{ asset('storage/'.$g) }}" alt="" class="rounded border" style="width:70px;height:50px;object-fit:cover;">
+                                <div class="position-relative border rounded p-1 gallery-item" data-path="{{ $g }}">
+                                    <img src="{{ asset('storage/'.$g) }}" alt="" class="rounded" style="width:70px;height:50px;object-fit:cover;">
+                                    <label class="d-block mb-0 mt-1 small text-nowrap">
+                                        <input type="checkbox" name="gallery_remove[]" value="{{ $g }}" class="gallery-remove-check"> Kaldır
+                                    </label>
+                                </div>
                             @endforeach
                         </div>
+                        <small class="text-muted d-block">Kaldırmak istediğiniz görselleri işaretleyin.</small>
                     @else
                         <p class="text-muted small mb-1">Henüz galeri görseli yok.</p>
                     @endif

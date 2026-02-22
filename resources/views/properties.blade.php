@@ -16,8 +16,8 @@
         <div class="row mb-5">
             @forelse($properties ?? [] as $property)
             <div class="col-md-6 col-lg-4 mb-4">
-                <div class="property-entry h-100">
-                    <a href="{{ route('properties.show', $property) }}" class="property-thumbnail">
+                <a href="{{ route('properties.show', $property) }}" class="property-entry h-100 d-block text-body bg-white" style="text-decoration: none;">
+                    <div class="property-thumbnail">
                         <div class="offer-type-wrap">
                             @if($property->listing_type === 'sale')
                                 <span class="offer-type bg-danger">Satılık</span>
@@ -26,9 +26,9 @@
                             @endif
                         </div>
                         <img src="{{ $property->image ? asset('storage/'.$property->image) : asset('tema/images/img_1.jpg') }}" alt="{{ $property->title }}" class="img-fluid" style="width:100%;height:280px;object-fit:cover;display:block;">
-                    </a>
+                    </div>
                     <div class="p-4 property-body">
-                        <h2 class="property-title"><a href="{{ route('properties.show', $property) }}">{{ $property->title }}</a></h2>
+                        <h2 class="property-title">{{ $property->title }}</h2>
                         <span class="property-location d-block mb-3"><span class="property-icon icon-room"></span> {{ $property->address ?? $property->city ?? '—' }}</span>
                         <strong class="property-price text-primary mb-3 d-block text-success">{{ $property->currency_symbol }}{{ number_format($property->price, 0, ',', '.') }}</strong>
                         <ul class="property-specs-wrap mb-3 mb-lg-0">
@@ -38,7 +38,7 @@
                             <li><span class="property-specs">m²</span><span class="property-specs-number">{{ $property->area_sqm ?? '—' }}</span></li>
                         </ul>
                     </div>
-                </div>
+                </a>
             </div>
             @empty
             <div class="col-12 text-center py-5">

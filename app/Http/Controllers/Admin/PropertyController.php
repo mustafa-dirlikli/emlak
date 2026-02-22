@@ -192,6 +192,9 @@ class PropertyController extends Controller
             'site_adi' => ['nullable', 'string', 'max:255'],
             'aidat' => ['nullable', 'numeric', 'min:0'],
             'image' => ['nullable', 'image', 'max:2048'],
+            'remove_main' => ['nullable', 'boolean'],
+            'gallery_remove' => ['nullable', 'array'],
+            'gallery_remove.*' => ['nullable', 'string', 'max:500'],
             'gallery_new' => ['nullable', 'array'],
             'gallery_new.*' => ['image', 'max:2048'],
             'is_active' => ['boolean'],
@@ -224,17 +227,22 @@ class PropertyController extends Controller
         $validated['ilan_detay'] = $request->filled('ilan_detay') ? json_decode($request->ilan_detay, true) : null;
         $validated['arsa_ozellikler'] = $request->filled('arsa_ozellikler') ? json_decode($request->arsa_ozellikler, true) : null;
 
-        if ($request->hasFile('image')) {
+        if ($request->boolean('remove_main')) {
+            $validated['image'] = null;
+        } elseif ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('properties', 'public');
         }
+        $removePaths = $request->input('gallery_remove', []);
+        if (! is_array($removePaths)) {
+            $removePaths = [];
+        }
+        $existingGallery = $property->gallery ?? [];
+        $validated['gallery'] = array_values(array_filter($existingGallery, fn ($path) => ! in_array($path, $removePaths)));
         $galleryNew = $request->file('gallery_new');
         if ($galleryNew && count($galleryNew) > 0) {
-            $existing = $property->gallery ?? [];
-            $added = [];
             foreach ($galleryNew as $file) {
-                $added[] = $file->store('properties', 'public');
+                $validated['gallery'][] = $file->store('properties', 'public');
             }
-            $validated['gallery'] = array_merge($existing, $added);
         }
 
         $property->update($validated);

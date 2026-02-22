@@ -45,12 +45,12 @@ class PropertyListingController extends Controller
         } else {
             $query->latest();
         }
-        $featuredProperties = $query->take(6)->get();
+        $featuredProperties = $query->paginate(15)->withQueryString();
 
         return view('home', compact('featuredProperties'));
     }
 
-    /** Filtrelenmiş ilan kartları (AJAX, sayfa yenilemeden) */
+    /** Filtrelenmiş ilan kartları + sayfalama (AJAX) */
     public function homeFilter(Request $request)
     {
         $query = Property::where('is_active', true)
@@ -65,9 +65,10 @@ class PropertyListingController extends Controller
         } else {
             $query->latest();
         }
-        $featuredProperties = $query->take(6)->get();
+        $featuredProperties = $query->paginate(15)->withPath(route('home'))->withQueryString();
+        $layout = $request->get('layout', 'card');
 
-        return response()->view('partials.home-property-cards', compact('featuredProperties'))->header('Content-Type', 'text/html; charset=UTF-8');
+        return response()->view('partials.home-property-results', compact('featuredProperties', 'layout'))->header('Content-Type', 'text/html; charset=UTF-8');
     }
 
     public function buy(Request $request): View
