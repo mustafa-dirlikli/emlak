@@ -27,6 +27,8 @@ class Property extends Model
         'neighborhood',
         'address',
         'lokasyon',
+        'latitude',
+        'longitude',
         'rooms',
         'salon',
         'room_layout',
@@ -86,6 +88,8 @@ class Property extends Model
             'gallery' => 'array',
             'ilan_detay' => 'array',
             'arsa_ozellikler' => 'array',
+            'latitude' => 'float',
+            'longitude' => 'float',
         ];
     }
 

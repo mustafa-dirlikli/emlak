@@ -107,6 +107,10 @@
                     <textarea name="lokasyon" id="lokasyon" class="form-control @error('lokasyon') is-invalid @enderror" rows="2">{{ old('lokasyon', $property->lokasyon) }}</textarea>
                     @error('lokasyon')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+                @include('admin.properties.partials.map-picker', [
+                    'latitude' => old('latitude', $property->latitude),
+                    'longitude' => old('longitude', $property->longitude),
+                ])
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group mb-3">

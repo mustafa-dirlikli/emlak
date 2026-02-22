@@ -208,7 +208,59 @@
                     @if($property->lokasyon || $property->address)
                         <p class="mb-2"><strong>Adres:</strong> {{ $property->address ?? $property->lokasyon ?? '—' }}</p>
                         @if($property->city)<p class="mb-0 text-muted">{{ $property->city }}@if($property->district) / {{ $property->district }}@endif</p>@endif
-                    @else
+                    @endif
+                    @if($property->latitude && $property->longitude)
+                        <div class="row mt-3">
+                            <div class="col-md-6 mb-3">
+                                <h6 class="mb-2">Harita</h6>
+                                <div id="property-show-map" style="width:100%; height:280px; border-radius:8px; overflow:hidden;"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <h6 class="mb-2">Sokak Görünümü</h6>
+                                <div id="property-show-streetview" style="width:100%; height:280px; border-radius:8px; overflow:hidden;"></div>
+                            </div>
+                        </div>
+                        @php $googleMapsKey = config('services.google_maps.api_key'); @endphp
+                        @if($googleMapsKey)
+                            @push('scripts')
+                            <script>
+                            (function() {
+                                var lat = {{ (float) $property->latitude }};
+                                var lng = {{ (float) $property->longitude }};
+                                var key = @json($googleMapsKey);
+                                function initShowMap() {
+                                    var pos = { lat: lat, lng: lng };
+                                    var map = new google.maps.Map(document.getElementById('property-show-map'), {
+                                        center: pos,
+                                        zoom: 16,
+                                        mapTypeControl: true,
+                                        streetViewControl: false,
+                                    });
+                                    new google.maps.Marker({ position: pos, map: map });
+                                    var streetView = new google.maps.StreetViewPanorama(document.getElementById('property-show-streetview'), {
+                                        position: pos,
+                                        pov: { heading: 34, pitch: 10 },
+                                        zoom: 1,
+                                    });
+                                    streetView.setVisible(true);
+                                }
+                                if (typeof google !== 'undefined' && google.maps) {
+                                    initShowMap();
+                                } else {
+                                    window.initPropertyShowMap = initShowMap;
+                                    var s = document.createElement('script');
+                                    s.src = 'https://maps.googleapis.com/maps/api/js?key=' + key + '&callback=initPropertyShowMap';
+                                    s.async = true;
+                                    s.defer = true;
+                                    document.head.appendChild(s);
+                                }
+                            })();
+                            </script>
+                            @endpush
+                        @else
+                            <p class="text-muted small mt-2">Harita göstermek için GOOGLE_MAPS_API_KEY ayarlayın.</p>
+                        @endif
+                    @elseif(!$property->lokasyon && !$property->address)
                         <p class="text-muted mb-0">Konum bilgisi eklenmemiş.</p>
                     @endif
                 </div>
