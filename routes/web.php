@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\PropertyController;
 use App\Http\Controllers\PropertyListingController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PropertyListingController::class, 'home'])->name('home');
@@ -15,9 +17,8 @@ Route::get('/kiralik', [PropertyListingController::class, 'rent'])->name('rent')
 Route::get('/ilanlar', [PropertyListingController::class, 'index'])->name('properties');
 Route::get('/ilan/{property}', [PropertyListingController::class, 'show'])->name('properties.show');
 
-Route::get('/blog', function () {
-    return view('blog');
-})->name('blog');
+Route::get('/projelerimiz', [ProjectController::class, 'index'])->name('projects');
+Route::get('/proje/{project}', [ProjectController::class, 'show'])->name('projects.show');
 
 Route::get('/hakkimizda', function () {
     return view('about');
@@ -39,5 +40,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/api/districts', [\App\Http\Controllers\Admin\LocationApiController::class, 'districts'])->name('api.districts');
         Route::get('/api/neighborhoods', [\App\Http\Controllers\Admin\LocationApiController::class, 'neighborhoods'])->name('api.neighborhoods');
         Route::resource('properties', PropertyController::class)->except(['show']);
+        Route::resource('projects', AdminProjectController::class)->except(['show']);
     });
 });

@@ -39,7 +39,7 @@
                                 <li><a href="{{ route('properties', ['type' => 'isyeri']) }}">İş Yeri</a></li>
                             </ul>
                         </li>
-                        <li class="{{ request()->routeIs('blog') ? 'active' : '' }}"><a href="{{ route('blog') }}">Blog</a></li>
+                        <li class="{{ request()->routeIs('projects') ? 'active' : '' }}"><a href="{{ route('projects') }}">Projelerimiz</a></li>
                         <li class="{{ request()->routeIs('about') ? 'active' : '' }}"><a href="{{ route('about') }}">Hakkımızda</a></li>
                         <li class="{{ request()->routeIs('contact') ? 'active' : '' }}"><a href="{{ route('contact') }}">İletişim</a></li>
                     </ul>

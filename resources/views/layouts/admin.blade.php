@@ -100,6 +100,13 @@
                 <span class="icon icon-plus"></span><span class="nav-text">Yeni İlan</span>
             </a>
             <div class="nav-divider"></div>
+            <a href="{{ route('admin.projects.index') }}" class="nav-link {{ request()->routeIs('admin.projects.*') ? 'active' : '' }}">
+                <span class="icon icon-folder"></span><span class="nav-text">Projelerimiz</span>
+            </a>
+            <a href="{{ route('admin.projects.create') }}" class="nav-link {{ request()->routeIs('admin.projects.create') ? 'active' : '' }}">
+                <span class="icon icon-plus"></span><span class="nav-text">Yeni Proje</span>
+            </a>
+            <div class="nav-divider"></div>
             <a href="{{ url('/') }}" class="nav-link" target="_blank">
                 <span class="icon icon-external-link"></span><span class="nav-text">Siteye Git</span>
             </a>

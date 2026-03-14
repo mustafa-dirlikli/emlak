@@ -175,7 +175,7 @@
                                 @if($property->isyeri_turu)<tr><td class="text-muted">Türü</td><td>{{ $property->isyeri_turu }}</td></tr>@endif
                                 @if($property->bolum_oda_sayisi)<tr><td class="text-muted">Bölüm / Oda Sayısı</td><td>{{ $property->bolum_oda_sayisi }}</td></tr>@endif
                             @endif
-                            <tr><td class="text-muted">Kimden</td><td class="font-weight-bold text-danger">{{ $property->personel ?: 'Sahibinden' }}</td></tr>
+                            <!-- <tr><td class="text-muted">Kimden</td><td class="font-weight-bold text-danger">{{ $property->personel ?: 'Sahibinden' }}</td></tr> -->
                         </tbody>
                     </table>
                 </div>
