@@ -8,12 +8,12 @@
 </div>
 
 <div class="site-navbar mt-4">
-    <div class="container py-1">
+    <div class="container site-navbar-container">
         <div class="row align-items-center">
-            <div class="col-8 col-md-8 col-lg-4">
+            <div class="col-8 col-md-8 col-lg-4 site-logo-wrap">
                 <h1 class="mb-0">
-                    <a href="{{ route('home') }}" class="text-white h2 mb-0">
-                        <strong>EMREMLAK<span class="text-danger">.</span></strong>
+                    <a href="{{ route('home') }}">
+                        <img src="{{ asset('images/emr-logo.webp') }}" alt="EMREMLAK" class="site-logo-img">
                     </a>
                 </h1>
             </div>

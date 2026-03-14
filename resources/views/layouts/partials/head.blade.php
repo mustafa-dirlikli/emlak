@@ -21,10 +21,14 @@
   .site-navbar {
     background: #25262a !important;
   }
+  .site-navbar .container.site-navbar-container { padding-top: 0.5rem; padding-bottom: 0.5rem; }
   body.inner-page .site-navbar {
     position: relative;
   }
-  .site-navbar .site-logo a,
+  .site-navbar .site-logo-wrap { line-height: 0; padding-top: 0.25rem; padding-bottom: 0.25rem; }
+  .site-navbar .site-logo-wrap h1 { line-height: 0; margin: 0; }
+  .site-navbar .site-logo-wrap a { line-height: 0; display: inline-block; }
+  .site-navbar .site-logo-img { max-height: 80px; width: auto; height: auto; display: block; vertical-align: middle; }
   .site-navbar .site-navigation .site-menu > li > a,
   .site-navbar .site-menu-toggle {
     color: #fff !important;
